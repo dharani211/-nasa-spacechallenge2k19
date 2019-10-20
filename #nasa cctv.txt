@@ -1,0 +1,114 @@
+import tensorflow
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+import tensorflow
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+32
+model = Sequential()
+model.add(Conv2D(32,(3,3),input_shape = (60,60,3),activation = 'relu'))
+model.add(MaxPooling2D(pool_size = (2,2)))
+model.add(Conv2D(32,(3,3),activation = 'relu'))
+model.add(MaxPooling2D(pool_size = (2,2)))
+model.add(Flatten())
+model.add(Dense(64,activation = 'relu'))
+model.add(Dense(1,activation = 'sigmoid'))
+model.summary()
+Model: "sequential_3"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d_9 (Conv2D)            (None, 58, 58, 32)        896       
+_________________________________________________________________
+max_pooling2d_9 (MaxPooling2 (None, 29, 29, 32)        0         
+_________________________________________________________________
+conv2d_10 (Conv2D)           (None, 27, 27, 32)        9248      
+_________________________________________________________________
+max_pooling2d_10 (MaxPooling (None, 13, 13, 32)        0         
+_________________________________________________________________
+flatten_3 (Flatten)          (None, 5408)              0         
+_________________________________________________________________
+dense_4 (Dense)              (None, 64)                346176    
+_________________________________________________________________
+dense_5 (Dense)              (None, 1)                 65        
+=================================================================
+Total params: 356,385
+Trainable params: 356,385
+Non-trainable params: 0
+_________________________________________________________________
+model.compile(optimizer = 'adam',
+             loss = 'binary_crossentropy',
+             metrics =['accuracy'])
+from keras.preprocessing.image import ImageDataGenerator
+train_datagen = ImageDataGenerator(
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
+​
+test_datagen = ImageDataGenerator(rescale=1./255)
+​
+train_set = train_datagen.flow_from_directory(
+        'Dataset/training',
+        target_size=(60,60),
+        batch_size=10,
+        class_mode='binary')
+​
+test_set = test_datagen.flow_from_directory(
+        'Dataset/Test',
+        target_size=(60,60),
+        batch_size=10,
+        class_mode='binary')
+​
+model.fit_generator(
+        train_set,
+        steps_per_epoch=210,
+        epochs=10,
+        validation_data=test_set,
+        validation_steps=99)
+​
+Found 210 images belonging to 2 classes.
+Found 99 images belonging to 2 classes.
+Epoch 1/10
+210/210 [==============================] - 18s 85ms/step - loss: 0.5293 - accuracy: 0.7129 - val_loss: 0.5931 - val_accuracy: 0.6993
+Epoch 2/10
+210/210 [==============================] - 26s 124ms/step - loss: 0.2600 - accuracy: 0.8848 - val_loss: 0.4847 - val_accuracy: 0.8175
+Epoch 3/10
+210/210 [==============================] - 28s 133ms/step - loss: 0.1264 - accuracy: 0.9529 - val_loss: 0.7355 - val_accuracy: 0.7390
+Epoch 4/10
+210/210 [==============================] - 28s 133ms/step - loss: 0.0901 - accuracy: 0.9662 - val_loss: 0.8587 - val_accuracy: 0.8186
+Epoch 5/10
+210/210 [==============================] - 28s 133ms/step - loss: 0.0499 - accuracy: 0.9876 - val_loss: 0.7385 - val_accuracy: 0.8481
+Epoch 6/10
+210/210 [==============================] - 27s 130ms/step - loss: 0.0374 - accuracy: 0.9876 - val_loss: 0.7441 - val_accuracy: 0.8389
+Epoch 7/10
+210/210 [==============================] - 28s 131ms/step - loss: 0.0732 - accuracy: 0.9743 - val_loss: 0.8644 - val_accuracy: 0.7982
+Epoch 8/10
+210/210 [==============================] - 28s 132ms/step - loss: 0.0184 - accuracy: 0.9952 - val_loss: 1.0884 - val_accuracy: 0.8063
+Epoch 9/10
+210/210 [==============================] - 28s 133ms/step - loss: 0.0275 - accuracy: 0.9881 - val_loss: 0.8042 - val_accuracy: 0.8277
+Epoch 10/10
+210/210 [==============================] - 28s 131ms/step - loss: 0.0179 - accuracy: 0.9948 - val_loss: 1.2504 - val_accuracy: 0.7880
+<tensorflow.python.keras.callbacks.History at 0x275132998d0>
+from keras.preprocessing import image
+test_image = image.load_img('sample.jpg.jpg',target_size = (60,60))
+test_image = image.img_to_array(test_image)
+test_image = np.expand_dims(test_image,axis = 0)
+result = model.predict(test_image)
+train_set.class_indices
+if result[0][0] == 1:
+    prediction = 'violance'
+else:
+    prediction = 'accident'
+    
+print(prediction)
+violance
+​
